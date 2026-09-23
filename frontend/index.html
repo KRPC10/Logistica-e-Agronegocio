@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Painel Web - Logística Preditiva AgTech</title>
+    <!-- Tailwind CSS para Estilização Web -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Chart.js para Gráficos Web -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body class="bg-gray-100 font-sans p-6">
+
+    <!-- Cabeçalho da Aplicação Web -->
+    <header class="mb-6 flex justify-between items-center bg-white p-4 rounded-lg shadow-md border-l-4 border-green-600">
+        <div>
+            <h1 class="text-2xl font-bold text-gray-800">🌾 Plataforma de Logística Preditiva & Otimização</h1>
+            <p class="text-sm text-gray-500">Gestão Web em Tempo Real - Silos e Frotas (Mato Grosso)</p>
+        </div>
+        <span class="bg-green-100 text-green-800 px-3 py-1 rounded-full text-xs font-semibold">Painel Gestor Web</span>
+    </header>
+
+    <!-- Indicadores Principais (KPIs) -->
+    <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
+        <div class="bg-white p-4 rounded-lg shadow">
+            <p class="text-gray-500 text-xs font-bold uppercase">Ocupação Atual (Silo Sorriso)</p>
+            <p class="text-3xl font-bold text-gray-800 mt-1">78%</p>
+            <span class="text-xs text-green-600 font-semibold">Capacidade Estática: 50.000 ton</span>
+        </div>
+        <div class="bg-white p-4 rounded-lg shadow">
+            <p class="text-gray-500 text-xs font-bold uppercase">Previsão 24h (IA LightGBM)</p>
+            <p class="text-3xl font-bold text-red-600 mt-1">91%</p>
+            <span class="text-xs text-red-500 font-semibold">⚠️ Risco Crítico de Fila</span>
+        </div>
+        <div class="bg-white p-4 rounded-lg shadow">
+            <p class="text-gray-500 text-xs font-bold uppercase">Tempo Médio de Espera</p>
+            <p class="text-3xl font-bold text-yellow-600 mt-1">25 min</p>
+            <span class="text-xs text-green-600 font-semibold">↓ -15 min após Slot Booking</span>
+        </div>
+        <div class="bg-white p-4 rounded-lg shadow">
+            <p class="text-gray-500 text-xs font-bold uppercase">Caminhões Agendados (Hoje)</p>
+            <p class="text-3xl font-bold text-blue-600 mt-1">142</p>
+            <span class="text-xs text-gray-500 font-semibold">Janelas ativas de descarga</span>
+        </div>
+    </div>
+
+    <!-- Gráfico de Previsão e Alerta da IA -->
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-6">
+        <!-- Gráfico em Canvas Web (2 Colunas) -->
+        <div class="bg-white p-5 rounded-lg shadow lg:col-span-2">
+            <h2 class="text-lg font-bold text-gray-700 mb-4">📈 Curva Preditiva de Ocupação (72 Horas)</h2>
+            <canvas id="canvasGrafico" class="w-full h-64"></canvas>
+        </div>
+
+        <!-- Alertas de Roteirização e Clima (1 Coluna) -->
+        <div class="bg-white p-5 rounded-lg shadow">
+            <h2 class="text-lg font-bold text-gray-700 mb-4">🚨 Decisões do Sistema de IA</h2>
+            <div class="space-y-3">
+                <div class="p-3 bg-red-50 border-l-4 border-red-500 text-red-800 text-sm rounded">
+                    <strong>Desvio de Rota Ativo:</strong> 18 caminhões direcionados do Silo Sorriso para o Silo Central via Dijkstra Modificado.
+                </div>
+                <div class="p-3 bg-yellow-50 border-l-4 border-yellow-500 text-yellow-800 text-sm rounded">
+                    <strong>Alerta Clima:</strong> Chuva de 15mm prevista na BR-163. Tempo de secagem/recepção ajustado.
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Tabela Web de Slot Booking (Agendamentos) -->
+    <div class="bg-white p-5 rounded-lg shadow">
+        <h2 class="text-lg font-bold text-gray-700 mb-4">🚚 Gestão de Passes Digitais e Agendamentos (Slot Booking)</h2>
+        <div class="overflow-x-auto">
+            <table class="min-w-full text-left text-sm">
+                <thead class="bg-gray-100 text-gray-600 border-b">
+                    <tr>
+                        <th class="p-3">Passe Digital</th>
+                        <th class="p-3">Motorista</th>
+                        <th class="p-3">Placa</th>
+                        <th class="p-3">Produto / Carga</th>
+                        <th class="p-3">Horário Agendado</th>
+                        <th class="p-3">Status</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y text-gray-700">
+                    <tr>
+                        <td class="p-3 font-mono font-bold text-green-700">PASS-101</td>
+                        <td class="p-3">Carlos Silva</td>
+                        <td class="p-3">RZT-4A12</td>
+                        <td class="p-3">Soja (45.0 ton)</td>
+                        <td class="p-3 font-semibold">14:00</td>
+                        <td class="p-3"><span class="bg-blue-100 text-blue-800 px-2 py-1 rounded text-xs font-semibold">Em Trânsito</span></td>
+                    </tr>
+                    <tr>
+                        <td class="p-3 font-mono font-bold text-green-700">PASS-102</td>
+                        <td class="p-3">João Pereira</td>
+                        <td class="p-3">JXK-9088</td>
+                        <td class="p-3">Milho (50.0 ton)</td>
+                        <td class="p-3 font-semibold">14:30</td>
+                        <td class="p-3"><span class="bg-yellow-100 text-yellow-800 px-2 py-1 rounded text-xs font-semibold">No Pátio</span></td>
+                    </tr>
+                    <tr>
+                        <td class="p-3 font-mono font-bold text-green-700">PASS-103</td>
+                        <td class="p-3">Marcos Souza</td>
+                        <td class="p-3">QWE-3120</td>
+                        <td class="p-3">Soja (42.5 ton)</td>
+                        <td class="p-3 font-semibold">15:00</td>
+                        <td class="p-3"><span class="bg-green-100 text-green-800 px-2 py-1 rounded text-xs font-semibold">Descarregando</span></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Script para renderizar o gráfico Web e conectar à API -->
+    <script>
+        const ctx = document.getElementById('canvasGrafico').getContext('2d');
+        new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: ['Atual', '+6h', '+12h', '+18h', '+24h', '+36h', '+48h', '+72h'],
+                datasets: [{
+                    label: 'Ocupação Preditiva (%)',
+                    data: [78, 80, 83, 87, 91, 94, 92, 85],
+                    borderColor: '#16a34a',
+                    backgroundColor: 'rgba(22, 163, 74, 0.1)',
+                    fill: true,
+                    borderWidth: 3,
+                    tension: 0.3
+                }]
+            },
+            options: {
+                responsive: true,
+                scales: {
+                    y: { beginAtZero: false, max: 100 }
+                }
+            }
+        });
+    </script>
+</body>
+</html>
