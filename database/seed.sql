@@ -2,20 +2,16 @@
 -- DADOS FICTÍCIOS - CENÁRIO DE DECISÃO AGROFLOW IA
 -- ============================================================
 
--- 1. CADASTRO DOS SILOS (Silo A e Silo B da Imagem)
+-- 1. CADASTRO DOS SILOS
 INSERT INTO silo (nome, cidade, capacidade_total, ocupacao_atual, status) 
 VALUES 
 ('Silo A - Sorriso', 'Sorriso', 10000.0, 9200.0, 'Operacional'), -- 92% Ocupado
 ('Silo B - Sinop', 'Sinop', 10000.0, 5800.0, 'Operacional');   -- 58% Ocupado
 
--- 2. PRODUTOR E CARGA AGUARDANDO TRANSPORTE (420 Toneladas)
+-- 2. PRODUTOR RURAL (Fazenda de Origem)
 INSERT INTO produtor (nome, cpf_cnpj, telefone, email, cidade, fazenda, status)
 VALUES 
 ('Fazenda Agroflow MT', '12.345.678/0001-90', '(66) 99999-1010', 'contato@agroflow.com.br', 'Sorriso', 'Fazenda Primavera', 'Ativo');
-
-INSERT INTO produto (id_produtor, tipo_grao, quantidade_grao, status)
-VALUES 
-(1, 'Soja', 420.0, 'Aguardando Transporte'); -- 420 Toneladas apontadas no fluxo
 
 -- 3. ROTAS (Silo A próximo vs Silo B alternativo)
 INSERT INTO rota (origem, destino, distancia_km, tempo_estimado, condicao_estrada)
@@ -23,7 +19,7 @@ VALUES
 ('Fazenda Primavera', 'Silo A - Sorriso', 15.0, '00:20:00', 'Boa'),
 ('Fazenda Primavera', 'Silo B - Sinop', 45.0, '00:45:00', 'Excelente');
 
--- 4. CADASTRO DA FROTA (18 Caminhões e Motoristas)
+-- 4. CADASTRO DA FROTA (18 Motoristas e Caminhões)
 INSERT INTO motorista (nome, cpf, cnh, telefone, status) VALUES
 ('Motorista 01', '111.111.111-01', 'CNH0001', '(66) 98100-0001', 'Ativo'),
 ('Motorista 02', '111.111.111-02', 'CNH0002', '(66) 98100-0002', 'Ativo'),
@@ -44,7 +40,6 @@ INSERT INTO motorista (nome, cpf, cnh, telefone, status) VALUES
 ('Motorista 17', '111.111.111-17', 'CNH0017', '(66) 98100-0017', 'Ativo'),
 ('Motorista 18', '111.111.111-18', 'CNH0018', '(66) 98100-0018', 'Ativo');
 
--- Vínculo das 18 Placas para compor a Frota
 INSERT INTO caminhao (id_motorista, placa, modelo, capacidade_toneladas, ano) VALUES
 (1,  'RAX-1A01', 'Volvo FH 540', 25.0, 2023), (2,  'RAX-1A02', 'Scania R450',  25.0, 2022),
 (3,  'RAX-1A03', 'DAF XF',       25.0, 2023), (4,  'RAX-1A04', 'Volvo FH 540', 25.0, 2021),
@@ -70,8 +65,8 @@ VALUES
 (1, 1, CURRENT_DATE, 92.0, '02:30:00', 'CRITICO'), -- Silo A
 (1, 2, CURRENT_DATE, 58.0, '00:15:00', 'NORMAL');  -- Silo B
 
--- 6. EXECUÇÃO DO DESVIO PELA IA (Primeiras entregas alocadas no Silo B)
-INSERT INTO entrega (id_caminhao, id_silo, id_rota, id_produto, data_saida, quantidade_grao, status_entrega)
+-- 6. EXECUÇÃO DO DESVIO PELA IA (Corrigido colunas: id_produtor e tipo_grao)
+INSERT INTO entrega (id_caminhao, id_silo, id_rota, id_produtor, data_saida, quantidade_grao, tipo_grao, status_entrega)
 VALUES 
-(1, 2, 2, 1, CURRENT_TIMESTAMP, 25.0, 'Em Transito (Redirecionado pela IA)'),
-(2, 2, 2, 1, CURRENT_TIMESTAMP, 25.0, 'Em Transito (Redirecionado pela IA)');
+(1, 2, 2, 1, CURRENT_DATE, 25.0, 'Soja', 'Em Transito (Redirecionado pela IA)'),
+(2, 2, 2, 1, CURRENT_DATE, 25.0, 'Soja', 'Em Transito (Redirecionado pela IA)');
