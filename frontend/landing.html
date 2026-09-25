@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Agroflow IA — Logística Preditiva para o Agronegócio</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        agro: {
+                            dark: '#081c15',
+                            deep: '#1b4332',
+                            primary: '#2d6a4f',
+                            accent: '#52b788',
+                            light: '#d8f3dc',
+                            gold: '#f59e0b'
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-800 antialiased">
+
+    <!-- NAVBAR -->
+    <header class="sticky top-0 z-50 bg-agro-dark/95 backdrop-blur border-b border-agro-primary/30 text-white">
+        <div class="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
+            <div class="flex items-center space-x-3">
+                <span class="text-3xl">🌾</span>
+                <div>
+                    <span class="text-2xl font-bold tracking-tight text-white">Agroflow <span class="text-agro-accent">IA</span></span>
+                    <span class="block text-[10px] text-agro-light/70 uppercase tracking-widest font-semibold">SENAI MT • BR-163</span>
+                </div>
+            </div>
+
+            <nav class="hidden md:flex items-center space-x-8 text-sm font-medium text-slate-300">
+                <a href="#solucao" class="hover:text-agro-accent transition-colors">A Solução</a>
+                <a href="#ia" class="hover:text-agro-accent transition-colors">Tecnologia IA</a>
+                <a href="#impacto" class="hover:text-agro-accent transition-colors">Impacto & ROI</a>
+                <a href="#planos" class="hover:text-agro-accent transition-colors">Planos & Preços</a>
+            </nav>
+
+            <div class="flex items-center space-x-4">
+                <a href="index.html" class="bg-agro-accent hover:bg-emerald-400 text-agro-dark font-bold px-5 py-2.5 rounded-lg shadow-lg shadow-agro-accent/20 transition-all flex items-center gap-2">
+                    <span>▶️ Demo ao Vivo</span>
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <!-- HERO SECTION -->
+    <section class="relative bg-gradient-to-b from-agro-dark via-agro-deep to-slate-900 text-white py-24 px-6 overflow-hidden">
+        <div class="absolute inset-0 opacity-10 bg-[radial-gradient(#52b788_1px,transparent_1px)] [background-size:16px_16px]"></div>
+        
+        <div class="max-w-5xl mx-auto text-center relative z-10">
+            <span class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full text-xs font-semibold bg-agro-primary/50 text-agro-light border border-agro-accent/30 mb-6">
+                ⚡ Inteligência Preditiva no Corredor da BR-163
+            </span>
+            <h1 class="text-4xl sm:text-6xl font-extrabold tracking-tight leading-tight mb-6">
+                Transforme gargalos na safra em <span class="text-transparent bg-clip-text bg-gradient-to-r from-agro-accent to-emerald-300">eficiência logística mensurável</span>
+            </h1>
+            <p class="text-lg sm:text-xl text-slate-300 max-w-3xl mx-auto mb-10 leading-relaxed font-light">
+                Antecipe colapsos na recepção de grãos em até 72 horas. Reduza tempo de fila nas moegas, economize combustível e elimine perdas por deterioração da carga.
+            </p>
+
+            <div class="flex flex-col sm:flex-row items-center justify-center gap-4">
+                <a href="index.html" class="w-full sm:w-auto bg-agro-accent hover:bg-emerald-400 text-agro-dark text-lg font-bold px-8 py-4 rounded-xl shadow-xl shadow-agro-accent/20 transition-all text-center">
+                    Acessar Simulação em Tempo Real
+                </a>
+                <a href="#planos" class="w-full sm:w-auto bg-white/10 hover:bg-white/20 text-white text-lg font-semibold px-8 py-4 rounded-xl backdrop-blur transition-all border border-white/10 text-center">
+                    Ver Planos Comerciais
+                </a>
+            </div>
+
+            <!-- METRIC CARDS BANNER -->
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mt-16 pt-12 border-t border-white/10 text-left">
+                <div class="p-4 rounded-lg bg-white/5 backdrop-blur border border-white/5">
+                    <p class="text-3xl font-extrabold text-agro-accent">-30% a 50%</p>
+                    <p class="text-xs text-slate-400 mt-1">Tempo Médio em Fila</p>
+                </div>
+                <div class="p-4 rounded-lg bg-white/5 backdrop-blur border border-white/5">
+                    <p class="text-3xl font-extrabold text-agro-gold">+806%</p>
+                    <p class="text-xs text-slate-400 mt-1">ROI Anual Estimado</p>
+                </div>
+                <div class="p-4 rounded-lg bg-white/5 backdrop-blur border border-white/5">
+                    <p class="text-3xl font-extrabold text-agro-accent">15%</p>
+                    <p class="text-xs text-slate-400 mt-1">Economia de Combustível</p>
+                </div>
+                <div class="p-4 rounded-lg bg-white/5 backdrop-blur border border-white/5">
+                    <p class="text-3xl font-extrabold text-emerald-400">1,1 Mês</p>
+                    <p class="text-xs text-slate-400 mt-1">Payback do Investimento</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- O PROBLEMA VS A SOLUÇÃO -->
+    <section id="solucao" class="py-20 px-6 max-w-7xl mx-auto">
+        <div class="text-center max-w-3xl mx-auto mb-16">
+            <h2 class="text-3xl font-bold text-slate-900 mb-4">O Desafio do Agrotech em Mato Grosso</h2>
+            <p class="text-slate-600">A desaceleração logística no pico da colheita gera perdas milionárias em filas e deterioração de grãos.</p>
+        </div>
+
+        <div class="grid md:grid-cols-2 gap-8">
+            <!-- Card Problema -->
+            <div class="bg-red-50/50 border border-red-200/80 rounded-2xl p-8 relative">
+                <div class="w-12 h-12 bg-red-100 text-red-600 rounded-xl flex items-center justify-center font-bold text-xl mb-6">⚠️</div>
+                <h3 class="text-2xl font-bold text-red-900 mb-4">Cenário Tradicional (Reativo)</h3>
+                <ul class="space-y-4 text-slate-700 text-sm">
+                    <li class="flex items-start gap-3">
+                        <span class="text-red-500 font-bold">•</span>
+                        <span><b>Filas Quilométricas:</b> Caminhões aguardam até 24h nas moegas, estressando a malha e danificando cargas de soja e milho.</span>
+                    </li>
+                    <li class="flex items-start gap-3">
+                        <span class="text-red-500 font-bold">•</span>
+                        <span><b>Rotas Ineficientes:</b> Escolha manual de trajetos sem dados em tempo real sobre pavimento e tráfego na BR-163.</span>
+                    </li>
+                    <li class="flex items-start gap-3">
+                        <span class="text-red-500 font-bold">•</span>
+                        <span><b>Custos Invisíveis:</b> Desperdício massivo de diesel em marcha lenta e deságio no preço pago por perda de umidade.</span>
+                    </li>
+                </ul>
+            </div>
+
+            <!-- Card Solução -->
+            <div class="bg-emerald-50/50 border border-emerald-200/80 rounded-2xl p-8 relative">
+                <div class="w-12 h-12 bg-emerald-100 text-emerald-700 rounded-xl flex items-center justify-center font-bold text-xl mb-6">🚀</div>
+                <h3 class="text-2xl font-bold text-emerald-950 mb-4">Com Agroflow IA (Preditivo)</h3>
+                <ul class="space-y-4 text-slate-700 text-sm">
+                    <li class="flex items-start gap-3">
+                        <span class="text-emerald-600 font-bold">•</span>
+                        <span><b>Roteirização Dinâmica:</b> Algoritmo de menor custo/tempo redistribui veículos para silos alternativos (Silo B/C) automaticamente.</span>
+                    </li>
+                    <li class="flex items-start gap-3">
+                        <span class="text-emerald-600 font-bold">•</span>
+                        <span><b>Slot Booking Digital:</b> Agendamento inteligente e passes de entrada para organizar o fluxo nas recepções.</span>
+                    </li>
+                    <li class="flex items-start gap-3">
+                        <span class="text-emerald-600 font-bold">•</span>
+                        <span><b>Decisões Prescritivas:</b> Motor central em Python (FastAPI + LightGBM) orientando gestores e motoristas em tempo real.</span>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </section>
+
+    <!-- ARQUITETURA E TECNOLOGIA -->
+    <section id="ia" class="bg-slate-900 text-white py-20 px-6">
+        <div class="max-w-7xl mx-auto">
+            <div class="text-center max-w-3xl mx-auto mb-16">
+                <span class="text-agro-accent font-semibold text-xs tracking-widest uppercase">Motor Preditivo</span>
+                <h2 class="text-3xl font-bold mt-2">Arquitetura Orientada por Inteligência Artificial</h2>
+            </div>
+
+            <div class="grid md:grid-cols-3 gap-8">
+                <div class="bg-slate-800/60 p-6 rounded-xl border border-slate-700/50">
+                    <div class="text-3xl mb-4">🤖</div>
+                    <h3 class="text-xl font-bold mb-2 text-agro-light">Machine Learning (LightGBM)</h3>
+                    <p class="text-slate-400 text-sm leading-relaxed">
+                        Previsão contínua da taxa de ocupação dos silos em janelas de 24h a 72h. Considera clima, pluviometria, safra e frotas em trânsito.
+                    </p>
+                </div>
+
+                <div class="bg-slate-800/60 p-6 rounded-xl border border-slate-700/50">
+                    <div class="text-3xl mb-4">🗺️</div>
+                    <h3 class="text-xl font-bold mb-2 text-agro-light">Dijkstra Adaptado</h3>
+                    <p class="text-slate-400 text-sm leading-relaxed">
+                        Grafo de custos com pesos dinâmicos que ponderam distância, trafegabilidade da rodovia e o tempo de fila preditivo no destino.
+                    </p>
+                </div>
+
+                <div class="bg-slate-800/60 p-6 rounded-xl border border-slate-700/50">
+                    <div class="text-3xl mb-4">⚡</div>
+                    <h3 class="text-xl font-bold mb-2 text-agro-light">FastAPI & Leaflet</h3>
+                    <p class="text-slate-400 text-sm leading-relaxed">
+                        Backend assíncrono de alta performance integrado a um painel geográfico em tempo real para monitoramento e controle total.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- PLANOS E PREÇOS -->
+    <section id="planos" class="py-24 px-6 max-w-7xl mx-auto">
+        <div class="text-center max-w-3xl mx-auto mb-16">
+            <span class="text-agro-primary font-bold text-xs tracking-widest uppercase">Modelos SaaS B2B</span>
+            <h2 class="text-3xl font-bold text-slate-900 mt-2">Planos Dimensionados para sua Operação</h2>
+            <p class="text-slate-600 mt-2">Sem taxas ocultas. Alinhado ao volume de toneladas e tamanho da frota.</p>
+        </div>
+
+        <div class="grid md:grid-cols-3 gap-8 items-stretch">
+            
+            <!-- PLANO STARTER -->
+            <div class="bg-white rounded-2xl border border-slate-200 p-8 flex flex-col justify-between hover:shadow-xl transition-shadow">
+                <div>
+                    <h3 class="text-xl font-bold text-slate-900">Starter</h3>
+                    <p class="text-xs text-slate-500 mt-1">Cooperativas de pequeno/médio porte (até 100k ton/safra)</p>
+                    <div class="my-6">
+                        <span class="text-4xl font-extrabold text-slate-900">R$ 8.000</span>
+                        <span class="text-slate-500 text-sm">/mês</span>
+                    </div>
+                    <ul class="space-y-3 text-sm text-slate-600 mb-8">
+                        <li class="flex items-center gap-2">✓ 1 Unidade Receptora</li>
+                        <li class="flex items-center gap-2">✓ Previsão Preditiva Básica</li>
+                        <li class="flex items-center gap-2">✓ R$ 0,15 / ton excedente</li>
+                        <li class="flex items-center gap-2">✓ Suporte via Chamados</li>
+                    </ul>
+                </div>
+                <a href="index.html" class="w-full bg-slate-100 hover:bg-slate-200 text-slate-800 font-semibold py-3 rounded-xl text-center block transition-colors">
+                    Testar no Simulador
+                </a>
+            </div>
+
+            <!-- PLANO PROFESSIONAL (DESTAQUE) -->
+            <div class="bg-slate-900 text-white rounded-2xl border-2 border-agro-accent p-8 flex flex-col justify-between relative shadow-2xl scale-105">
+                <span class="absolute -top-3.5 left-1/2 -translate-x-1/2 bg-agro-accent text-agro-dark font-extrabold text-[11px] uppercase tracking-wider px-3 py-1 rounded-full">
+                    Mais Recomendado
+                </span>
+                <div>
+                    <h3 class="text-xl font-bold text-white">Professional</h3>
+                    <p class="text-xs text-slate-400 mt-1">Médio/Grande porte (Até 300k ton/safra e múltiplos silos)</p>
+                    <div class="my-6">
+                        <span class="text-4xl font-extrabold text-agro-accent">R$ 22.000</span>
+                        <span class="text-slate-400 text-sm">/mês</span>
+                    </div>
+                    <ul class="space-y-3 text-sm text-slate-300 mb-8">
+                        <li class="flex items-center gap-2 text-white font-medium">✓ Múltiplas Unidades Receptoras</li>
+                        <li class="flex items-center gap-2">✓ Até 300 Veículos Inclusos</li>
+                        <li class="flex items-center gap-2">✓ Machine Learning LightGBM Full</li>
+                        <li class="flex items-center gap-2">✓ Roteirização Dinâmica em Tempo Real</li>
+                        <li class="flex items-center gap-2">✓ Suporte SLA Reforçado na Safra</li>
+                    </ul>
+                </div>
+                <a href="index.html" class="w-full bg-agro-accent hover:bg-emerald-400 text-agro-dark font-bold py-3.5 rounded-xl text-center block transition-all shadow-lg shadow-agro-accent/20">
+                    Iniciar Simulação Agora
+                </a>
+            </div>
+
+            <!-- PLANO ENTERPRISE -->
+            <div class="bg-white rounded-2xl border border-slate-200 p-8 flex flex-col justify-between hover:shadow-xl transition-shadow">
+                <div>
+                    <h3 class="text-xl font-bold text-slate-900">Enterprise</h3>
+                    <p class="text-xs text-slate-500 mt-1">Grandes Cooperativas e Tradings (Acima de 300k ton/safra)</p>
+                    <div class="my-6">
+                        <span class="text-4xl font-extrabold text-slate-900">R$ 35.000</span>
+                        <span class="text-slate-500 text-sm">/mês</span>
+                    </div>
+                    <ul class="space-y-3 text-sm text-slate-600 mb-8">
+                        <li class="flex items-center gap-2">✓ Múltiplos Hubs & Terminais</li>
+                        <li class="flex items-center gap-2">✓ Frota Ampliada / Integrada</li>
+                        <li class="flex items-center gap-2">✓ API Customizada & IoT Direct</li>
+                        <li class="flex items-center gap-2">✓ Customer Success Dedicado</li>
+                    </ul>
+                </div>
+                <a href="index.html" class="w-full bg-slate-100 hover:bg-slate-200 text-slate-800 font-semibold py-3 rounded-xl text-center block transition-colors">
+                    Testar no Simulador
+                </a>
+            </div>
+
+        </div>
+    </section>
+
+    <!-- FOOTER CTA -->
+    <section class="bg-gradient-to-r from-agro-dark to-agro-deep text-white py-16 px-6 text-center">
+        <div class="max-w-4xl mx-auto">
+            <h2 class="text-3xl font-extrabold mb-4">Pronto para eliminar os gargalos na sua operação?</h2>
+            <p class="text-slate-300 mb-8 font-light">Veja a plataforma operando na prática com dados da malha da BR-163 em Mato Grosso.</p>
+            <a href="index.html" class="inline-block bg-agro-accent hover:bg-emerald-400 text-agro-dark text-lg font-bold px-10 py-4 rounded-xl shadow-2xl transition-all">
+                Abrir Dashboard de Simulação ▶️
+            </a>
+        </div>
+    </section>
+
+    <!-- FOOTER -->
+    <footer class="bg-slate-950 text-slate-500 text-xs py-8 px-6 text-center border-t border-slate-800">
+        <p>Agroflow IA — Sistema de Logística Preditiva e Otimização para o Agronegócio</p>
+        <p class="mt-1">Desenvolvido para o Projeto Integrador SENAI MT • Mato Grosso, 2026</p>
+    </footer>
+
+</body>
+</html>

@@ -1,686 +1,653 @@
 <!DOCTYPE html>
-<html lang="pt-BR" class="scroll-smooth">
+<html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Agroflow IA - Inteligência Preditiva para Logística Agrícola</title>
-    <!-- Tailwind CSS -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Chart.js -->
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <title>Agroflow IA — Gestão Logística Preditiva</title>
+    
+    <!-- Google Fonts & Leaflet CSS -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+
+    <style>
+        :root {
+            --bg-main: #f4f7f5;
+            --surface: #ffffff;
+            --primary: #1b4332;
+            --primary-light: #2d6a4f;
+            --accent: #40916c;
+            --text-main: #2d3142;
+            --text-muted: #6c757d;
+            --border: #e2e8f0;
+            --danger: #d32f2f;
+            --danger-bg: #ffebee;
+            --success: #2e7d32;
+            --success-bg: #e8f5e9;
+            --warning: #f57c00;
+            --warning-bg: #fff3e0;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-main);
+            color: var(--text-main);
+            padding-bottom: 40px;
+        }
+
+        header {
+            background-color: var(--primary);
+            color: white;
+            padding: 16px 32px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .brand h1 {
+            font-size: 1.4rem;
+            font-weight: 700;
+        }
+
+        .brand span {
+            background-color: var(--accent);
+            color: white;
+            font-size: 0.75rem;
+            padding: 3px 8px;
+            border-radius: 4px;
+            font-weight: 600;
+        }
+
+        .header-controls {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .btn-simular {
+            background-color: #27ae60;
+            color: white;
+            border: none;
+            padding: 10px 18px;
+            border-radius: 8px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+
+        .btn-simular:hover {
+            background-color: #219150;
+            transform: translateY(-1px);
+        }
+
+        .btn-simular.active {
+            background-color: #e74c3c;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 24px auto;
+            padding: 0 24px;
+        }
+
+        .kpi-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 16px;
+            margin-bottom: 24px;
+        }
+
+        .kpi-card {
+            background: var(--surface);
+            padding: 16px;
+            border-radius: 12px;
+            border: 1px solid var(--border);
+        }
+
+        .kpi-title {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            font-weight: 600;
+            margin-bottom: 6px;
+            text-transform: uppercase;
+        }
+
+        .kpi-value {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--primary);
+        }
+
+        .kpi-sub {
+            font-size: 0.75rem;
+            margin-top: 4px;
+            font-weight: 500;
+        }
+
+        .badge-danger { color: var(--danger); }
+        .badge-success { color: var(--success); }
+        .badge-warning { color: var(--warning); }
+
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 24px;
+        }
+
+        @media (max-width: 1024px) {
+            .dashboard-grid { grid-template-columns: 1fr; }
+        }
+
+        .card {
+            background: var(--surface);
+            border-radius: 12px;
+            border: 1px solid var(--border);
+            padding: 20px;
+            margin-bottom: 24px;
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+        }
+
+        .card-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: var(--primary);
+        }
+
+        #map {
+            height: 480px;
+            width: 100%;
+            border-radius: 8px;
+            border: 1px solid var(--border);
+            z-index: 1;
+        }
+
+        .ia-decision-box {
+            background: #f0fdf4;
+            border: 1px solid #bbf7d0;
+            border-radius: 8px;
+            padding: 16px;
+            margin-bottom: 16px;
+            transition: all 0.3s ease;
+        }
+
+        .ia-decision-box.alerta-critico {
+            background: var(--danger-bg);
+            border-color: #fca5a5;
+        }
+
+        .ia-decision-box.alerta-warning {
+            background: var(--warning-bg);
+            border-color: #fcd34d;
+        }
+
+        .ia-decision-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 10px;
+        }
+
+        .ia-status {
+            background: var(--success);
+            color: white;
+            font-size: 0.75rem;
+            font-weight: 700;
+            padding: 4px 10px;
+            border-radius: 12px;
+        }
+
+        .silo-info {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.85rem;
+            font-weight: 600;
+            margin-bottom: 6px;
+        }
+
+        .progress-bar-bg {
+            background: #e2e8f0;
+            height: 10px;
+            border-radius: 5px;
+            overflow: hidden;
+            margin-bottom: 14px;
+        }
+
+        .progress-bar-fill {
+            height: 100%;
+            border-radius: 5px;
+            transition: width 0.4s ease, background-color 0.4s ease;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.85rem;
+        }
+
+        th {
+            background: #f8fafc;
+            color: var(--text-muted);
+            text-align: left;
+            padding: 10px 12px;
+            font-weight: 600;
+            border-bottom: 1px solid var(--border);
+        }
+
+        td {
+            padding: 12px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .row-nova {
+            animation: highlightRow 1.5s ease-out;
+        }
+
+        @keyframes highlightRow {
+            0% { background-color: #fef08a; }
+            100% { background-color: transparent; }
+        }
+
+        .status-pill {
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+
+        .pill-redirected {
+            background: var(--warning-bg);
+            color: var(--warning);
+        }
+
+        .pill-blocked {
+            background: var(--danger-bg);
+            color: var(--danger);
+        }
+    </style>
 </head>
-<body class="bg-slate-50 font-sans text-slate-800 antialiased selection:bg-emerald-500 selection:text-white">
+<body>
 
-    <!-- NAVBAR DA LANDING PAGE -->
-    <nav class="sticky top-0 z-50 bg-white/90 backdrop-blur-md border-b border-emerald-100 shadow-sm">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
-            <div class="flex items-center gap-3">
-                <div class="h-11 w-11 bg-emerald-600 rounded-xl flex items-center justify-center font-black text-white text-2xl shadow-md shadow-emerald-200">
-                    🌾
-                </div>
-                <div>
-                    <span class="font-black text-xl tracking-tight text-slate-900 block leading-none">Agroflow <span class="text-emerald-600">IA</span></span>
-                    <span class="text-[10px] uppercase font-bold text-emerald-700 tracking-wider">Logística Preditiva • SENAI MT</span>
-                </div>
+    <header>
+        <div class="brand">
+            <h1>Agroflow IA</h1>
+            <span>v1.0 SaaS</span>
+        </div>
+        <div class="header-controls">
+            <button id="btn-simular" class="btn-simular" onclick="alternarSimulacao()">▶️ Iniciar Simulação de Safra</button>
+            <div style="font-size: 0.85rem; opacity: 0.9; background: rgba(255, 255, 255, 0.1); padding: 6px 14px; border-radius: 20px;">
+                📍 BR-163 / MT
             </div>
+        </div>
+    </header>
+
+    <div class="container">
+        
+        <div class="kpi-grid">
+            <div class="kpi-card">
+                <div class="kpi-title">Frota Ativa na Rota</div>
+                <div class="kpi-value" id="kpi-frota">18 Veh</div>
+                <div class="kpi-sub badge-success">● Telemetria Online</div>
+            </div>
+            <div class="kpi-card">
+                <div class="kpi-title">Silo A (Sorriso)</div>
+                <div class="kpi-value" id="kpi-silo-a">75%</div>
+                <div class="kpi-sub" id="sub-silo-a">● Normal</div>
+            </div>
+            <div class="kpi-card">
+                <div class="kpi-title">Silo B (Sinop)</div>
+                <div class="kpi-value" id="kpi-silo-b">50%</div>
+                <div class="kpi-sub badge-success" id="sub-silo-b">▼ Receptor Libre</div>
+            </div>
+            <div class="kpi-card">
+                <div class="kpi-title">Silo C (Vera)</div>
+                <div class="kpi-value" id="kpi-silo-c">30%</div>
+                <div class="kpi-sub badge-success" id="sub-silo-c">▼ Reserva Operacional</div>
+            </div>
+        </div>
+
+        <div class="dashboard-grid">
             
-            <div class="hidden md:flex items-center gap-8 text-sm font-semibold text-slate-600">
-                <a href="#pilares" class="hover:text-emerald-600 transition">Pilares</a>
-                <a href="#problema-solucao" class="hover:text-emerald-600 transition">O Problema</a>
-                <a href="#funcionalidades" class="hover:text-emerald-600 transition">Recursos</a>
-                <a href="#demo" class="hover:text-emerald-600 transition">Simulação Interativa</a>
+            <div>
+                <div class="card">
+                    <div class="card-header">
+                        <div class="card-title">🗺️ Monitoramento de Malha Logística Regional</div>
+                        <span id="sim-status-label" style="font-size: 0.8rem; color: var(--text-muted);">Status: Aguardando Simulação</span>
+                    </div>
+                    <div id="map"></div>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <div class="card-title">🚚 Histórico de Ações de Roteamento da IA</div>
+                    </div>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Veículo</th>
+                                <th>Placa</th>
+                                <th>Carga</th>
+                                <th>Origem</th>
+                                <th>Destino Definido</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tabela-frotas">
+                            <tr>
+                                <td><b>Volvo FH 540</b></td>
+                                <td>RAX-1A01</td>
+                                <td>25.0 Ton</td>
+                                <td>Fazenda Primavera</td>
+                                <td>Silo A - Sorriso</td>
+                                <td><span class="status-pill" style="background:#e2e8f0; color:#334155;">Em Rota</span></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
             </div>
 
-            <button onclick="scrollToDemo()" class="bg-emerald-600 hover:bg-emerald-700 text-white font-extrabold text-xs py-3 px-6 rounded-xl shadow-md shadow-emerald-200 transition flex items-center gap-2">
-                <span>⚡</span> Ver Produto em Ação
-            </button>
+            <div>
+                <div class="card">
+                    <div class="card-header">
+                        <div class="card-title">🤖 Central de Decisão Preditiva</div>
+                    </div>
+
+                    <div class="ia-decision-box" id="ia-box">
+                        <div class="ia-decision-header">
+                            <span style="font-weight: 700; font-size: 0.85rem;" id="ia-num-decisao">STATUS SISTEMA</span>
+                            <span class="ia-status" id="ia-badge">MONITORANDO</span>
+                        </div>
+                        <div class="ia-reason" id="ia-texto-motivo">
+                            Aguardando fluxo de safra. Silos operando dentro das margens normais.
+                        </div>
+                    </div>
+
+                    <div class="silo-progress-group">
+                        <!-- Silo A -->
+                        <div class="silo-info">
+                            <span>Silo A - Sorriso</span>
+                            <span id="txt-silo-a-val">7.500 / 10.000 t (75%)</span>
+                        </div>
+                        <div class="progress-bar-bg">
+                            <div class="progress-bar-fill" id="bar-silo-a" style="width: 75%; background-color: var(--accent);"></div>
+                        </div>
+
+                        <!-- Silo B -->
+                        <div class="silo-info">
+                            <span>Silo B - Sinop</span>
+                            <span id="txt-silo-b-val">5.000 / 10.000 t (50%)</span>
+                        </div>
+                        <div class="progress-bar-bg">
+                            <div class="progress-bar-fill" id="bar-silo-b" style="width: 50%; background-color: var(--success);"></div>
+                        </div>
+
+                        <!-- Silo C -->
+                        <div class="silo-info">
+                            <span>Silo C - Vera</span>
+                            <span id="txt-silo-c-val">3.000 / 10.000 t (30%)</span>
+                        </div>
+                        <div class="progress-bar-bg">
+                            <div class="progress-bar-fill" id="bar-silo-c" style="width: 30%; background-color: var(--success);"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
         </div>
-    </nav>
+    </div>
 
-    <!-- HERO SECTION (TEMA CLARO COM FOCO EM VERDE) -->
-    <section class="relative pt-16 pb-20 md:pt-24 md:pb-28 overflow-hidden bg-gradient-to-b from-emerald-100/70 via-emerald-50/40 to-slate-50 border-b border-emerald-100">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center space-y-8 relative z-10">
-            
-            <span class="inline-flex items-center gap-2 bg-emerald-100 text-emerald-800 border border-emerald-300 text-xs font-bold px-4 py-1.5 rounded-full uppercase tracking-widest shadow-sm">
-                <span class="h-2 w-2 rounded-full bg-emerald-600 animate-pulse"></span>
-                E se você soubesse do problema antes do caminhão chegar?
-            </span>
-            
-            <h1 class="text-4xl sm:text-6xl lg:text-7xl font-black text-slate-900 tracking-tight max-w-5xl mx-auto leading-tight">
-                Sua safra produz. <br/>
-                <span class="text-emerald-600">
-                    A logística precisa acompanhar.
-                </span>
-            </h1>
-            
-            <p class="text-lg md:text-xl text-slate-600 max-w-3xl mx-auto font-normal leading-relaxed">
-                <strong class="text-emerald-800 font-semibold">Um caminhão parado é um caminhão que não está produzindo.</strong> 
-                O Agroflow IA conecta frota, silos, estoque e rotas para prever gargalos e tomar decisões antes que os atrasos aconteçam.
-            </p>
-
-            <!-- BADGES DE IMPACTO (CARDS CLAROS COM BORDA VERDE) -->
-            <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 max-w-3xl mx-auto pt-4">
-                <div class="bg-white border border-emerald-200 p-4 rounded-2xl text-center shadow-sm hover:shadow-md transition">
-                    <p class="text-[11px] text-slate-500 uppercase font-bold tracking-wider">Fila nos Silos</p>
-                    <p class="text-xl font-black text-emerald-600 mt-1">0 FILAS</p>
-                </div>
-                <div class="bg-white border border-emerald-200 p-4 rounded-2xl text-center shadow-sm hover:shadow-md transition">
-                    <p class="text-[11px] text-slate-500 uppercase font-bold tracking-wider">Tempo Perdido</p>
-                    <p class="text-xl font-black text-emerald-600 mt-1">0 ATRASOS</p>
-                </div>
-                <div class="bg-white border border-emerald-200 p-4 rounded-2xl text-center shadow-sm hover:shadow-md transition">
-                    <p class="text-[11px] text-slate-500 uppercase font-bold tracking-wider">Combustível</p>
-                    <p class="text-xl font-black text-emerald-600 mt-1">ECONOMIA</p>
-                </div>
-                <div class="bg-white border border-emerald-200 p-4 rounded-2xl text-center shadow-sm hover:shadow-md transition">
-                    <p class="text-[11px] text-slate-500 uppercase font-bold tracking-wider">Tomada de Decisão</p>
-                    <p class="text-xl font-black text-emerald-600 mt-1">PREDITIVA</p>
-                </div>
-            </div>
-
-            <div class="pt-6 flex flex-col sm:flex-row items-center justify-center gap-4">
-                <button onclick="scrollToDemo()" class="w-full sm:w-auto bg-emerald-600 hover:bg-emerald-700 text-white font-black text-base py-4 px-10 rounded-2xl shadow-lg shadow-emerald-200 transition flex items-center justify-center gap-3">
-                    <span>⚡</span> Experimentar Simulação Interativa
-                </button>
-                <a href="#pilares" class="w-full sm:w-auto bg-white hover:bg-emerald-50 border border-emerald-300 text-emerald-800 font-bold text-base py-4 px-8 rounded-2xl transition text-center shadow-sm">
-                    Conhecer a Plataforma
-                </a>
-            </div>
-        </div>
-    </section>
-
-    <!-- TRÊS PILARES DA AGROFLOW IA -->
-    <section id="pilares" class="py-20 bg-white border-b border-emerald-100">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="text-center max-w-2xl mx-auto mb-16 space-y-2">
-                <span class="text-emerald-700 font-mono text-xs uppercase tracking-widest font-bold">Visão Sistêmica da Operação</span>
-                <h2 class="text-3xl md:text-4xl font-extrabold text-slate-900">Prever • Otimizar • Decidir</h2>
-                <p class="text-slate-600 text-sm">Não é apenas um sistema de logística. É a inteligência que transforma dados em resultados na safra.</p>
-            </div>
-
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-                <!-- PILAR 1 -->
-                <div class="bg-emerald-50/40 p-8 rounded-3xl border border-emerald-200 hover:border-emerald-400 hover:shadow-lg hover:shadow-emerald-100 transition group">
-                    <div class="h-14 w-14 bg-emerald-600 rounded-2xl flex items-center justify-center text-3xl mb-6 text-white shadow-md shadow-emerald-200">
-                        🔮
-                    </div>
-                    <span class="text-xs font-mono text-emerald-700 font-bold uppercase tracking-wider block mb-1">Pilar 01</span>
-                    <h3 class="text-xl font-black text-slate-900 mb-3">1. PREVER</h3>
-                    <p class="text-slate-600 text-sm leading-relaxed">
-                        Analisa históricos e observa a ocupação dos silos para identificar padrões de acúmulo e antecipar possíveis gargalos na recepção de grãos.
-                    </p>
-                </div>
-
-                <!-- PILAR 2 -->
-                <div class="bg-emerald-50/40 p-8 rounded-3xl border border-emerald-200 hover:border-emerald-400 hover:shadow-lg hover:shadow-emerald-100 transition group">
-                    <div class="h-14 w-14 bg-emerald-600 rounded-2xl flex items-center justify-center text-3xl mb-6 text-white shadow-md shadow-emerald-200">
-                        🛣️
-                    </div>
-                    <span class="text-xs font-mono text-emerald-700 font-bold uppercase tracking-wider block mb-1">Pilar 02</span>
-                    <h3 class="text-xl font-black text-slate-900 mb-3">2. OTIMIZAR</h3>
-                    <p class="text-slate-600 text-sm leading-relaxed">
-                        Considera a localização exata dos caminhões e rotas disponíveis, apoiando o direcionamento eficiente de cargas para receptores livres.
-                    </p>
-                </div>
-
-                <!-- PILAR 3 -->
-                <div class="bg-emerald-50/40 p-8 rounded-3xl border border-emerald-200 hover:border-emerald-400 hover:shadow-lg hover:shadow-emerald-100 transition group">
-                    <div class="h-14 w-14 bg-emerald-600 rounded-2xl flex items-center justify-center text-3xl mb-6 text-white shadow-md shadow-emerald-200">
-                        📊
-                    </div>
-                    <span class="text-xs font-mono text-emerald-700 font-bold uppercase tracking-wider block mb-1">Pilar 03</span>
-                    <h3 class="text-xl font-black text-slate-900 mb-3">3. DECIDIR</h3>
-                    <p class="text-slate-600 text-sm leading-relaxed">
-                        Elimina o "achismo" e permite ao gestor agir com dados consolidados antes que a fila se forme na entrada dos silos e nas rodovias.
-                    </p>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- COMPARATIVO: O PROBLEMA VS A SOLUÇÃO -->
-    <section id="problema-solucao" class="py-20 bg-slate-50 border-b border-emerald-100">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 items-center">
-                
-                <!-- COLUNA PROBLEMA -->
-                <div class="bg-red-50/60 p-8 md:p-10 rounded-3xl border border-red-200 space-y-6 shadow-sm">
-                    <div class="inline-flex items-center gap-2 bg-red-100 text-red-800 border border-red-300 text-xs font-bold px-3.5 py-1 rounded-full uppercase">
-                        ⚠️ O Cenário Atual da Safra
-                    </div>
-                    <h3 class="text-2xl md:text-3xl font-black text-slate-900">
-                        Quando a informação chega tarde, a decisão também chega tarde.
-                    </h3>
-                    <ul class="space-y-4 text-sm text-slate-700">
-                        <li class="flex items-start gap-3">
-                            <span class="text-red-600 text-lg font-bold">✕</span>
-                            <span><strong>Filas nos Silos:</strong> Caminhões esperando horas ou dias para descarregar nas moegas.</span>
-                        </li>
-                        <li class="flex items-start gap-3">
-                            <span class="text-red-600 text-lg font-bold">✕</span>
-                            <span><strong>Rotas Ineficientes:</strong> Desperdício de combustível, desgaste da frota e mais quilômetros rodados.</span>
-                        </li>
-                        <li class="flex items-start gap-3">
-                            <span class="text-red-600 text-lg font-bold">✕</span>
-                            <span><strong>Falta de Previsibilidade:</strong> O gestor só descobre o problema quando o gargalo já aconteceu.</span>
-                        </li>
-                    </ul>
-                </div>
-
-                <!-- COLUNA SOLUÇÃO AGROFLOW -->
-                <div class="bg-emerald-700 text-white p-8 md:p-10 rounded-3xl border border-emerald-800 space-y-6 shadow-xl shadow-emerald-200/50">
-                    <div class="inline-flex items-center gap-2 bg-emerald-800 text-emerald-100 border border-emerald-600 text-xs font-bold px-3.5 py-1 rounded-full uppercase">
-                        ✅ A Solução Agroflow IA
-                    </div>
-                    <h3 class="text-2xl md:text-3xl font-black text-white">
-                        Conecte dados em tempo real e antecipe as decisões.
-                    </h3>
-                    <ul class="space-y-4 text-sm text-emerald-50">
-                        <li class="flex items-start gap-3">
-                            <span class="text-emerald-300 text-lg font-bold">✓</span>
-                            <span><strong>Monitoramento de Ocupação:</strong> Leitura contínua dos silos A, B e estoque em tempo real.</span>
-                        </li>
-                        <li class="flex items-start gap-3">
-                            <span class="text-emerald-300 text-lg font-bold">✓</span>
-                            <span><strong>Roteamento Dinâmico:</strong> Redirecionamento preventivo de frotas para receptores desimpedidos.</span>
-                        </li>
-                        <li class="flex items-start gap-3">
-                            <span class="text-emerald-300 text-lg font-bold">✓</span>
-                            <span><strong>Visão Unificada:</strong> Centraliza frota, capacidade de recepção e rotas em uma só tela.</span>
-                        </li>
-                    </ul>
-                </div>
-
-            </div>
-        </div>
-    </section>
-
-    <!-- SEÇÃO DO PRODUTO / DEMONSTRAÇÃO INTERATIVA -->
-    <section id="demo" class="py-16 md:py-24 bg-emerald-50/30">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8">
-
-            <!-- CABEÇALHO DO PRODUTO -->
-            <div class="flex flex-col md:flex-row justify-between items-start md:items-center bg-white p-6 md:p-8 rounded-3xl border border-emerald-200 gap-6 shadow-md shadow-emerald-100">
-                <div>
-                    <div class="flex items-center gap-2">
-                        <span class="bg-emerald-100 text-emerald-800 border border-emerald-300 text-xs font-mono font-bold px-3 py-1 rounded-full uppercase tracking-wider">
-                            Demonstração Interativa do Produto
-                        </span>
-                        <span class="text-xs text-slate-500 font-semibold">Versão 2.4 Preditiva</span>
-                    </div>
-                    <h2 class="text-2xl md:text-4xl font-black text-slate-900 mt-2">🌾 Central de Decisão Preditiva</h2>
-                    <p class="text-sm text-slate-600 mt-1">Simule o algoritmo analisando ocupação de silos, frota ativa e rota de entrega.</p>
-                </div>
-                
-                <button id="btnExecutarHeader" onclick="executarIAComAnimacao()" class="bg-emerald-600 hover:bg-emerald-700 text-white font-extrabold py-3.5 px-8 rounded-2xl shadow-lg shadow-emerald-200 transition flex items-center gap-2 text-sm whitespace-nowrap">
-                    <span>⚡</span> Executar Decisão Agroflow IA
-                </button>
-            </div>
-
-            <!-- KPIS DA OPERAÇÃO SIMULADA -->
-            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-                <!-- SILO A CARD -->
-                <div id="cardSiloA" class="bg-white p-6 rounded-2xl border transition-all shadow-sm">
-                    <div class="flex justify-between items-start">
-                        <div>
-                            <p class="text-slate-500 text-xs font-bold uppercase tracking-wider">Silo A (Sorriso)</p>
-                            <p id="kpiSiloA" class="text-3xl font-black mt-1 text-slate-800">--%</p>
-                        </div>
-                        <span class="text-2xl">🏬</span>
-                    </div>
-                    <div id="statusSiloA" class="mt-3 text-xs font-semibold">--</div>
-                </div>
-
-                <!-- SILO B CARD -->
-                <div id="cardSiloB" class="bg-white p-6 rounded-2xl border transition-all shadow-sm">
-                    <div class="flex justify-between items-start">
-                        <div>
-                            <p class="text-slate-500 text-xs font-bold uppercase tracking-wider">Silo B (Sinop)</p>
-                            <p id="kpiSiloB" class="text-3xl font-black mt-1 text-slate-800">--%</p>
-                        </div>
-                        <span class="text-2xl">🏭</span>
-                    </div>
-                    <div id="statusSiloB" class="mt-3 text-xs font-semibold">--</div>
-                </div>
-
-                <!-- FROTA CARD -->
-                <div class="bg-white p-6 rounded-2xl border border-emerald-200 shadow-sm">
-                    <div class="flex justify-between items-start">
-                        <div>
-                            <p class="text-slate-500 text-xs font-bold uppercase tracking-wider">Frota Ativa</p>
-                            <p id="kpiFrota" class="text-3xl font-black text-slate-800 mt-1">--</p>
-                        </div>
-                        <span class="text-2xl">🚛</span>
-                    </div>
-                    <span class="text-xs text-slate-500 font-semibold mt-3 inline-block">Caminhões Monitorados</span>
-                </div>
-
-                <!-- CARGA CARD -->
-                <div class="bg-white p-6 rounded-2xl border border-emerald-200 shadow-sm">
-                    <div class="flex justify-between items-start">
-                        <div>
-                            <p class="text-slate-500 text-xs font-bold uppercase tracking-wider">Carga Pendente</p>
-                            <p id="kpiCarga" class="text-3xl font-black text-emerald-600 mt-1">-- Ton</p>
-                        </div>
-                        <span class="text-2xl">🌱</span>
-                    </div>
-                    <span class="text-xs text-emerald-700 font-semibold mt-3 inline-block">Aguardando Destino</span>
-                </div>
-            </div>
-
-            <!-- ÁREA CENTRAL DE INTERAÇÃO E RESULTADOS -->
-            <main class="bg-white rounded-3xl border border-emerald-200 p-6 md:p-8 transition-all shadow-md shadow-emerald-100">
-                
-                <!-- ESTADO 1: INICIAL / AGUARDANDO -->
-                <div id="step1" class="space-y-6">
-                    <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 border-b border-slate-100 pb-4">
-                        <div>
-                            <h3 class="text-xl font-extrabold text-slate-900">⚙️ Processamento de Dados em Tempo Real</h3>
-                            <p class="text-sm text-slate-500">Dispare o algoritmo da IA para simular a análise preditiva da operação agrícola.</p>
-                        </div>
-                    </div>
-
-                    <div class="bg-emerald-50/50 rounded-2xl p-10 border-2 border-dashed border-emerald-300 text-center space-y-4">
-                        <div class="inline-flex items-center justify-center p-4 bg-emerald-600 text-white rounded-full text-3xl shadow-md shadow-emerald-200">
-                            🧠
-                        </div>
-                        <div class="max-w-md mx-auto space-y-1">
-                            <h4 class="text-base font-bold text-slate-900">Aguardando Disparo da Análise Preditiva</h4>
-                            <p id="step1Desc" class="text-xs text-slate-500">Carregando telemetria da safra...</p>
-                        </div>
-                        <button onclick="executarIAComAnimacao()" class="bg-emerald-600 hover:bg-emerald-700 text-white font-black py-4 px-8 rounded-2xl shadow-xl shadow-emerald-200 transition text-sm inline-flex items-center gap-2">
-                            <span>⚡</span> Processar Operação com Agroflow IA
-                        </button>
-                    </div>
-                </div>
-
-                <!-- ESTADO DE PROCESSAMENTO (LOADING ANIMATION) -->
-                <div id="stepLoading" class="hidden py-8 space-y-6 max-w-2xl mx-auto">
-                    <div class="text-center space-y-2">
-                        <div class="inline-flex items-center justify-center p-4 bg-emerald-600 text-white rounded-full animate-bounce text-3xl shadow-md shadow-emerald-200">
-                            🧠
-                        </div>
-                        <h4 class="text-lg font-bold text-slate-900">Agroflow IA Analisando Cenários...</h4>
-                        <p class="text-xs text-slate-500">Cruzando dados de capacidade dos silos, histórico de tempo de moega e rotas ativas.</p>
-                    </div>
-
-                    <div class="space-y-1">
-                        <div class="w-full bg-slate-200 rounded-full h-3 overflow-hidden border border-slate-300">
-                            <div id="progressBar" class="bg-emerald-600 h-3 rounded-full transition-all duration-75" style="width: 0%"></div>
-                        </div>
-                        <div class="text-right text-xs font-mono font-bold text-emerald-700" id="progressText">0%</div>
-                    </div>
-
-                    <div class="space-y-2 text-sm text-slate-700 bg-emerald-50 p-5 rounded-2xl border border-emerald-200 font-mono text-xs">
-                        <div id="check1" class="flex items-center gap-2 opacity-30 transition-opacity duration-300">
-                            <span class="text-emerald-700 font-bold">✓</span>
-                            <span id="check1Text">Ingerindo telemetria da frota e estoque...</span>
-                        </div>
-                        <div id="check2" class="flex items-center gap-2 opacity-30 transition-opacity duration-300">
-                            <span class="text-emerald-700 font-bold">✓</span>
-                            <span>Avaliando probabilidade de gargalo nos receptores...</span>
-                        </div>
-                        <div id="check3" class="flex items-center gap-2 opacity-30 transition-opacity duration-300">
-                            <span class="text-emerald-700 font-bold">✓</span>
-                            <span id="check3Text">Calculando rota alternativa e tempo de espera evitado...</span>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- ESTADO 2: PAINEL DE RESULTADOS DA IA -->
-                <div id="step2" class="hidden space-y-6">
-                    
-                    <!-- Banner da Decisão Preditiva -->
-                    <div class="p-5 bg-emerald-800 text-white rounded-2xl flex flex-col md:flex-row justify-between items-start md:items-center gap-4 shadow-lg shadow-emerald-900/20">
-                        <div>
-                            <div class="flex items-center gap-2">
-                                <span class="bg-emerald-900 text-emerald-200 text-[10px] font-extrabold px-2.5 py-0.5 rounded-full uppercase tracking-wider">Decisão Automática Ativa</span>
-                                <span class="text-xs text-emerald-300 font-mono font-bold">Grau de Confiança: 99.2%</span>
-                            </div>
-                            <p id="bannerTitle" class="text-xl font-black text-white mt-1">
-                                🚨 REDIRECIONAMENTO PREVENTIVO ATIVO
-                            </p>
-                            <p id="bannerInfo" class="text-xs text-emerald-100 mt-0.5">
-                                Carregando informações...
-                            </p>
-                        </div>
-                        <button onclick="reiniciarSimulacao()" class="bg-white hover:bg-emerald-50 text-emerald-900 font-bold py-2.5 px-4 rounded-xl text-xs shadow-md transition whitespace-nowrap flex items-center gap-2">
-                            <span>🔄</span> Sortear Novo Cenário (Silo A vs Silo B)
-                        </button>
-                    </div>
-
-                    <!-- GRID MAPA VISUAL E GRÁFICO CHART.JS -->
-                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                        
-                        <!-- MAPA VISUAL DE ROTEAMENTO -->
-                        <div class="bg-slate-900 rounded-2xl p-6 text-white shadow-md flex flex-col justify-between">
-                            <div>
-                                <div class="flex justify-between items-center mb-4 border-b border-slate-800 pb-3">
-                                    <span class="text-xs font-bold text-emerald-400 uppercase tracking-wider flex items-center gap-2">
-                                        <span class="h-2 w-2 rounded-full bg-emerald-400 animate-ping"></span>
-                                        Monitoramento Preditivo de Rotas
-                                    </span>
-                                    <span class="text-[10px] bg-slate-800 px-2.5 py-1 rounded text-slate-300 font-mono">BR-163 • MT</span>
-                                </div>
-
-                                <div class="grid grid-cols-3 gap-2 items-center text-center relative z-10 py-4">
-                                    
-                                    <!-- Fazenda / Origem -->
-                                    <div class="bg-slate-950 p-4 rounded-xl border border-slate-800">
-                                        <span class="text-3xl">🚜</span>
-                                        <p class="text-xs font-bold text-white mt-2">Fazenda MT</p>
-                                        <p id="mapFazendaSubtext" class="text-[10px] text-slate-400 mt-0.5">-- Ton. / -- Veículos</p>
-                                    </div>
-
-                                    <!-- Status da Rota -->
-                                    <div class="space-y-3 relative">
-                                        <div id="mapBlockedRouteText" class="flex items-center justify-center text-[10px] font-bold bg-red-950 text-red-400 py-1 rounded border border-red-900">
-                                            ❌ Rota Bloqueada
-                                        </div>
-                                        
-                                        <div class="flex items-center justify-center text-[10px] text-emerald-300 font-bold bg-emerald-950 py-2 rounded border border-emerald-500 animate-pulse">
-                                            🚛 Desvio Agroflow ➔
-                                        </div>
-                                    </div>
-
-                                    <!-- Destinos (Silo A e B) -->
-                                    <div class="space-y-3">
-                                        <div id="mapSiloABox" class="p-3 rounded-xl border text-left flex justify-between items-center transition-all">
-                                            <div>
-                                                <p class="text-xs font-bold">Silo A (Sorriso)</p>
-                                                <p id="mapSiloASubtext" class="text-[10px]">--%</p>
-                                            </div>
-                                            <span id="mapSiloAIcon" class="text-xs">--</span>
-                                        </div>
-
-                                        <div id="mapSiloBBox" class="p-3 rounded-xl border text-left flex justify-between items-center transition-all">
-                                            <div>
-                                                <p class="text-xs font-bold">Silo B (Sinop)</p>
-                                                <p id="mapSiloBSubtext" class="text-[10px]">--%</p>
-                                            </div>
-                                            <span id="mapSiloBIcon" class="text-xs">--</span>
-                                        </div>
-                                    </div>
-
-                                </div>
-                            </div>
-
-                            <div class="mt-4 pt-3 border-t border-slate-800 text-[11px] text-slate-400 flex justify-between">
-                                <span>Algoritmo: <strong class="text-emerald-400">Preditivo Inteligente</strong></span>
-                                <span>Status: <strong class="text-emerald-400">Ativo em Tempo Real</strong></span>
-                            </div>
-                        </div>
-
-                        <!-- GRÁFICO CHART.JS -->
-                        <div class="bg-white p-6 rounded-2xl border border-emerald-200 shadow-sm flex flex-col justify-between">
-                            <div>
-                                <div class="flex justify-between items-center mb-3">
-                                    <h4 class="text-xs font-bold text-slate-500 uppercase tracking-wider">Ocupação dos Silos vs. Balanceamento IA</h4>
-                                    <span class="text-[10px] bg-emerald-100 text-emerald-800 px-2 py-0.5 rounded font-mono font-bold">Chart.js</span>
-                                </div>
-                                <div class="h-52 relative">
-                                    <canvas id="graficoSilos"></canvas>
-                                </div>
-                            </div>
-
-                            <div class="grid grid-cols-2 gap-3 text-xs mt-4 pt-3 border-t border-slate-100">
-                                <div class="p-3 bg-red-50 rounded-xl text-red-800 border border-red-200">
-                                    <p class="font-bold">Sem Agroflow IA:</p>
-                                    <p class="text-[11px] mt-0.5 text-slate-600">• Caminhões parados na fila do silo saturado.</p>
-                                </div>
-                                <div class="p-3 bg-emerald-50 rounded-xl text-emerald-800 border border-emerald-200">
-                                    <p class="font-bold">Com Agroflow IA:</p>
-                                    <p class="text-[11px] mt-0.5 text-slate-600">• Carga redirecionada dinamicamente antes do gargalo.</p>
-                                </div>
-                            </div>
-                        </div>
-
-                    </div>
-                </div>
-
-            </main>
-        </div>
-    </section>
-
-    <!-- FOOTER DA LANDING PAGE -->
-    <footer class="bg-white text-slate-500 py-10 border-t border-emerald-100 text-xs text-center space-y-2">
-        <p class="font-bold text-slate-700">AGROFLOW IA • Plataforma de Logística Preditiva Agrícola</p>
-        <p>© 2026 Agroflow IA / SENAI MT. Todos os direitos reservados.</p>
-    </footer>
-
-    <!-- LÓGICA JAVASCRIPT COM ALTERNÂNCIA ALEATÓRIA -->
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <script>
-        let meuGrafico = null;
+        let map;
+        let simulacaoAtiva = false;
+        let intervalId = null;
 
-        // Estrutura do estado global da simulação
-        let dadosAtuais = {
-            gargaloEhA: true,
-            siloA: 92,
-            siloB: 58,
-            siloAApos: 92,
-            siloBApos: 75,
-            frota: 18,
-            carga: 420,
-            horasEvitadas: '2h 45min'
-        };
+        // Coordenadas das localidades
+        const coordsFazenda = [-12.4000, -55.8000];
+        const coordsSiloA   = [-12.5425, -55.7211]; // Sorriso
+        const coordsSiloB   = [-11.8608, -55.5097]; // Sinop
+        const coordsSiloC   = [-12.3083, -55.3167]; // Vera
 
-        function scrollToDemo() {
-            document.getElementById('demo').scrollIntoView({ behavior: 'smooth' });
-        }
+        // Estado inicial dos silos
+        let ocupacaoSiloA = 75;
+        let ocupacaoSiloB = 50;
+        let ocupacaoSiloC = 30;
+        let frotaContador = 2;
 
-        // SORTEIO DE DADOS ALTERNADOS E DINÂMICOS (50% SILO A / 50% SILO B)
-        function gerarNovosDados() {
-            const gargaloEhA = Math.random() < 0.5;
+        document.addEventListener('DOMContentLoaded', function() {
+            map = L.map('map').setView([-12.2000, -55.5000], 8);
 
-            const capGargalo = Math.floor(Math.random() * (98 - 85 + 1)) + 85;
-            const capLivre = Math.floor(Math.random() * (60 - 35 + 1)) + 35;
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                maxZoom: 18,
+                attribution: '© OpenStreetMap | Agroflow IA'
+            }).addTo(map);
 
-            const siloA = gargaloEhA ? capGargalo : capLivre;
-            const siloB = gargaloEhA ? capLivre : capGargalo;
+            L.marker(coordsFazenda).addTo(map).bindPopup("<b>🏡 Fazenda Primavera</b>");
+            L.marker(coordsSiloA).addTo(map).bindPopup("<b>🏭 Silo A - Sorriso</b>");
+            L.marker(coordsSiloB).addTo(map).bindPopup("<b>🏭 Silo B - Sinop</b>");
+            L.marker(coordsSiloC).addTo(map).bindPopup("<b>🏭 Silo C - Vera</b>");
 
-            const frota = Math.floor(Math.random() * (32 - 14 + 1)) + 14;
-            const tonPorCaminhao = Math.floor(Math.random() * (28 - 22 + 1)) + 22;
-            const carga = frota * tonPorCaminhao;
+            // Linhas de Rotas na Malha
+            L.polyline([coordsFazenda, coordsSiloA], { color: '#2d6a4f', weight: 4 }).addTo(map);
+            L.polyline([coordsFazenda, coordsSiloB], { color: '#40916c', weight: 3, dashArray: '5,5' }).addTo(map);
+            L.polyline([coordsFazenda, coordsSiloC], { color: '#f57c00', weight: 3, dashArray: '5,5' }).addTo(map);
+        });
 
-            const incremento = Math.floor(Math.random() * (22 - 12 + 1)) + 12;
+        function alternarSimulacao() {
+            const btn = document.getElementById('btn-simular');
+            const statusLabel = document.getElementById('sim-status-label');
 
-            const siloAApos = gargaloEhA ? siloA : Math.min(96, siloA + incremento);
-            const siloBApos = gargaloEhA ? Math.min(96, siloB + incremento) : siloB;
-
-            const hrs = Math.floor(frota * 0.16);
-            const mins = Math.round(((frota * 0.16) - hrs) * 60);
-            const horasEvitadas = `${hrs > 0 ? hrs + 'h ' : ''}${mins}min`;
-
-            dadosAtuais = {
-                gargaloEhA,
-                siloA,
-                siloB,
-                siloAApos,
-                siloBApos,
-                frota,
-                carga,
-                horasEvitadas
-            };
-
-            atualizarDOMComDados();
-        }
-
-        function atualizarDOMComDados() {
-            const d = dadosAtuais;
-            const gargaloNome = d.gargaloEhA ? 'Silo A (Sorriso)' : 'Silo B (Sinop)';
-            const livreNome = d.gargaloEhA ? 'Silo B (Sinop)' : 'Silo A (Sorriso)';
-
-            // 1. Atualizar Cards de KPI
-            document.getElementById('kpiSiloA').innerText = d.siloA + '%';
-            document.getElementById('kpiSiloB').innerText = d.siloB + '%';
-            document.getElementById('kpiFrota').innerText = d.frota;
-            document.getElementById('kpiCarga').innerText = d.carga + ' Ton';
-
-            // Estilização dinâmica dos Cards Silo A e Silo B em Light Mode
-            const cardA = document.getElementById('cardSiloA');
-            const cardB = document.getElementById('cardSiloB');
-            const txtA = document.getElementById('kpiSiloA');
-            const txtB = document.getElementById('kpiSiloB');
-
-            if (d.gargaloEhA) {
-                // Silo A é o Gargalo
-                cardA.className = "bg-red-50/80 p-6 rounded-2xl border-2 border-red-500 shadow-sm";
-                txtA.className = "text-3xl font-black text-red-600 mt-1";
-                document.getElementById('statusSiloA').innerHTML = `<span class="text-red-700 font-bold">⚠️ Gargalo Preditivo Detectado</span>`;
-
-                cardB.className = "bg-white p-6 rounded-2xl border border-emerald-200 shadow-sm";
-                txtB.className = "text-3xl font-black text-emerald-600 mt-1";
-                document.getElementById('statusSiloB').innerHTML = `<span class="text-emerald-700 font-bold">✅ Receptor Selecionado</span>`;
+            if (!simulacaoAtiva) {
+                simulacaoAtiva = true;
+                btn.innerHTML = "⏸️ Pausar Simulação";
+                btn.classList.add('active');
+                statusLabel.innerText = "Status: 🟢 Simulação em Execução...";
+                
+                intervalId = setInterval(executarCicloSimulacao, 2000);
             } else {
-                // Silo B é o Gargalo
-                cardA.className = "bg-white p-6 rounded-2xl border border-emerald-200 shadow-sm";
-                txtA.className = "text-3xl font-black text-emerald-600 mt-1";
-                document.getElementById('statusSiloA').innerHTML = `<span class="text-emerald-700 font-bold">✅ Receptor Selecionado</span>`;
-
-                cardB.className = "bg-red-50/80 p-6 rounded-2xl border-2 border-red-500 shadow-sm";
-                txtB.className = "text-3xl font-black text-red-600 mt-1";
-                document.getElementById('statusSiloB').innerHTML = `<span class="text-red-700 font-bold">⚠️ Gargalo Preditivo Detectado</span>`;
+                simulacaoAtiva = false;
+                btn.innerHTML = "▶️ Retomar Simulação";
+                btn.classList.remove('active');
+                statusLabel.innerText = "Status: ⏸️ Simulação Pausada";
+                clearInterval(intervalId);
             }
+        }
 
-            // 2. Textos descritivos das etapas
-            document.getElementById('step1Desc').innerText = `O Agroflow IA detectou ${d.carga} Toneladas e ${d.frota} caminhões para distribuição entre os receptores.`;
-            document.getElementById('check1Text').innerText = `Ingerindo telemetria: Silo A (${d.siloA}%), Silo B (${d.siloB}%), ${d.frota} Veículos...`;
-            document.getElementById('check3Text').innerText = `Calculando desvio de ${d.frota} caminhões (${d.carga} ton) para evitar fila...`;
+        async function executarCicloSimulacao() {
+            frotaContador++;
+            const placa = `RAX-1A${frotaContador < 10 ? '0' + frotaContador : frotaContador}`;
+            let destinoCoords = null;
 
-            // 3. Banner da Decisão Preditiva
-            document.getElementById('bannerTitle').innerText = `🚨 REDIRECIONAMENTO PREVENTIVO: ${gargaloNome.toUpperCase()} ➔ ${livreNome.toUpperCase()}`;
-            document.getElementById('bannerInfo').innerHTML = `A IA identificou congestionamento no <strong>${gargaloNome}</strong>. Cargas redirecionadas para o <strong>${livreNome}</strong>. Tempo de fila economizado: <strong>${d.horasEvitadas}</strong>.`;
+            // --- 1. ESCOAMENTO NATURAL DOS SILOS (Expedição para Ferrovias/Portos) ---
+            // A cada ciclo, os silos descarregam uma pequena % simulando o escoamento contínuo
+            ocupacaoSiloA = Math.max(10, ocupacaoSiloA - 3); 
+            ocupacaoSiloB = Math.max(10, ocupacaoSiloB - 2);
+            ocupacaoSiloC = Math.max(10, ocupacaoSiloC - 2);
 
-            // 4. Diagrama do Mapa
-            document.getElementById('mapFazendaSubtext').innerText = `${d.carga} Ton. / ${d.frota} Veículos`;
-            document.getElementById('mapBlockedRouteText').innerText = `❌ Rota ${d.gargaloEhA ? 'Silo A' : 'Silo B'} Bloqueada`;
-
-            const boxA = document.getElementById('mapSiloABox');
-            const boxB = document.getElementById('mapSiloBBox');
-
-            if (d.gargaloEhA) {
-                boxA.className = "bg-red-950/80 p-3 rounded-xl border border-red-700 text-red-400";
-                document.getElementById('mapSiloASubtext').innerText = `🔴 ${d.siloA}% (Gargalo)`;
-                document.getElementById('mapSiloAIcon').innerText = "🚫";
-
-                boxB.className = "bg-emerald-950/80 p-3 rounded-xl border-2 border-emerald-400 text-emerald-300 shadow-lg";
-                document.getElementById('mapSiloBSubtext').innerText = `🟢 ${d.siloB}% (Destino IA)`;
-                document.getElementById('mapSiloBIcon').innerText = "✅";
+            // --- 2. ENTRADA DE NOVOS CAMINHÕES (Decisão de Rota) ---
+            if (ocupacaoSiloA < 90) {
+                ocupacaoSiloA = Math.min(100, ocupacaoSiloA + 6);
+                destinoCoords = coordsSiloA;
+                adicionarLinhaTabela("Volvo FH 540", placa, "25.0 Ton", "Silo A - Sorriso", "Em Rota");
+            } else if (ocupacaoSiloB < 90) {
+                ocupacaoSiloB = Math.min(100, ocupacaoSiloB + 8);
+                destinoCoords = coordsSiloB;
+                adicionarLinhaTabela("Scania R450", placa, "25.0 Ton", "Silo B - Sinop (IA)", "Redirecionado");
+            } else if (ocupacaoSiloC < 90) {
+                ocupacaoSiloC = Math.min(100, ocupacaoSiloC + 9);
+                destinoCoords = coordsSiloC;
+                adicionarLinhaTabela("DAF XF", placa, "25.0 Ton", "Silo C - Vera (IA)", "Redirecionado L2");
             } else {
-                boxA.className = "bg-emerald-950/80 p-3 rounded-xl border-2 border-emerald-400 text-emerald-300 shadow-lg";
-                document.getElementById('mapSiloASubtext').innerText = `🟢 ${d.siloA}% (Destino IA)`;
-                document.getElementById('mapSiloAIcon').innerText = "✅";
-
-                boxB.className = "bg-red-950/80 p-3 rounded-xl border border-red-700 text-red-400";
-                document.getElementById('mapSiloBSubtext').innerText = `🔴 ${d.siloB}% (Gargalo)`;
-                document.getElementById('mapSiloBIcon').innerText = "🚫";
-            }
-        }
-
-        function executarIAComAnimacao() {
-            document.getElementById('step1').classList.add('hidden');
-            document.getElementById('step2').classList.add('hidden');
-            document.getElementById('stepLoading').classList.remove('hidden');
-
-            let progressBar = document.getElementById('progressBar');
-            let progressText = document.getElementById('progressText');
-            let check1 = document.getElementById('check1');
-            let check2 = document.getElementById('check2');
-            let check3 = document.getElementById('check3');
-
-            check1.classList.add('opacity-30');
-            check2.classList.add('opacity-30');
-            check3.classList.add('opacity-30');
-
-            let width = 0;
-            let interval = setInterval(() => {
-                width += 2;
-                progressBar.style.width = width + '%';
-                progressText.innerText = width + '%';
-
-                if (width >= 30) check1.classList.remove('opacity-30');
-                if (width >= 65) check2.classList.remove('opacity-30');
-                if (width >= 90) check3.classList.remove('opacity-30');
-
-                if (width >= 100) {
-                    clearInterval(interval);
-                    setTimeout(() => {
-                        document.getElementById('stepLoading').classList.add('hidden');
-                        document.getElementById('step2').classList.remove('hidden');
-                        renderizarGraficoSilos();
-                    }, 300);
-                }
-            }, 25);
-        }
-
-        function renderizarGraficoSilos() {
-            const ctx = document.getElementById('graficoSilos').getContext('2d');
-            const d = dadosAtuais;
-
-            if (meuGrafico) {
-                meuGrafico.destroy();
+                adicionarLinhaTabela("Mercedes Actros", placa, "25.0 Ton", "SEM RECEPTOR LIVRE", "Expedição Bloqueada");
             }
 
-            const corAtualA = d.gargaloEhA ? '#ef4444' : '#059669';
-            const corAtualB = d.gargaloEhA ? '#059669' : '#ef4444';
+            // --- 3. ANIMAÇÃO NO MAPA ---
+            if (destinoCoords) {
+                animarCaminhaoNaRota(coordsFazenda, destinoCoords);
+            }
 
-            const corAposA = d.gargaloEhA ? '#94a3b8' : '#047857';
-            const corAposB = d.gargaloEhA ? '#047857' : '#94a3b8';
+            // --- 4. ATUALIZAÇÃO DA INTERFACE E CONSULTA À API ---
+            atualizarInterface();
+            await dispararDecisaoIA();
+        }
 
-            meuGrafico = new Chart(ctx, {
-                type: 'bar',
-                data: {
-                    labels: ['Silo A (Sorriso)', 'Silo B (Sinop)'],
-                    datasets: [
-                        {
-                            label: 'Ocupação Atual (%)',
-                            data: [d.siloA, d.siloB],
-                            backgroundColor: [corAtualA, corAtualB],
-                            borderRadius: 8
-                        },
-                        {
-                            label: 'Após Redirecionamento IA (%)',
-                            data: [d.siloAApos, d.siloBApos],
-                            backgroundColor: [corAposA, corAposB],
-                            borderRadius: 8
-                        }
-                    ]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: {
-                        legend: { 
-                            position: 'top', 
-                            labels: { color: '#334155', boxWidth: 12, font: { size: 10, weight: 'bold' } } 
-                        }
-                    },
-                    scales: {
-                        y: { 
-                            beginAtZero: true, 
-                            max: 100, 
-                            ticks: { color: '#64748b', callback: value => value + '%' },
-                            grid: { color: '#e2e8f0' }
-                        },
-                        x: {
-                            ticks: { color: '#334155', font: { weight: 'bold' } },
-                            grid: { display: false }
-                        }
-                    }
-                }
+        function animarCaminhaoNaRota(origem, destino) {
+            const truckIcon = L.divIcon({
+                html: '<div style="font-size: 22px; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.3));">🚚</div>',
+                className: 'truck-marker',
+                iconSize: [30, 30],
+                iconAnchor: [15, 15]
             });
+
+            const marker = L.marker(origem, { icon: truckIcon }).addTo(map);
+
+            let passos = 50;
+            let passoAtual = 0;
+
+            const timer = setInterval(() => {
+                passoAtual++;
+                const lat = origem[0] + (destino[0] - origem[0]) * (passoAtual / passos);
+                const lng = origem[1] + (destino[1] - origem[1]) * (passoAtual / passos);
+
+                marker.setLatLng([lat, lng]);
+
+                if (passoAtual >= passos) {
+                    clearInterval(timer);
+                    setTimeout(() => map.removeLayer(marker), 600);
+                }
+            }, 30);
         }
 
-        function reiniciarSimulacao() {
-            gerarNovosDados();
-            document.getElementById('step1').classList.remove('hidden');
-            document.getElementById('step2').classList.add('hidden');
-            document.getElementById('stepLoading').classList.add('hidden');
+        function atualizarInterface() {
+            // Silo A
+            document.getElementById('kpi-silo-a').innerText = `${ocupacaoSiloA}%`;
+            document.getElementById('txt-silo-a-val').innerText = `${ocupacaoSiloA * 100} / 10.000 t (${ocupacaoSiloA}%)`;
+            const barA = document.getElementById('bar-silo-a');
+            barA.style.width = `${ocupacaoSiloA}%`;
+            if (ocupacaoSiloA >= 90) {
+                barA.style.backgroundColor = 'var(--danger)';
+                document.getElementById('sub-silo-a').innerText = '▲ CRÍTICO (Gargalo)';
+                document.getElementById('sub-silo-a').className = 'kpi-sub badge-danger';
+            } else {
+                barA.style.backgroundColor = 'var(--accent)';
+                document.getElementById('sub-silo-a').innerText = '● Normal';
+                document.getElementById('sub-silo-a').className = 'kpi-sub badge-success';
+            }
+
+            // Silo B
+            document.getElementById('kpi-silo-b').innerText = `${ocupacaoSiloB}%`;
+            document.getElementById('txt-silo-b-val').innerText = `${ocupacaoSiloB * 100} / 10.000 t (${ocupacaoSiloB}%)`;
+            const barB = document.getElementById('bar-silo-b');
+            barB.style.width = `${ocupacaoSiloB}%`;
+            if (ocupacaoSiloB >= 90) {
+                barB.style.backgroundColor = 'var(--danger)';
+                document.getElementById('sub-silo-b').innerText = '▲ CRÍTICO (Gargalo)';
+                document.getElementById('sub-silo-b').className = 'kpi-sub badge-danger';
+            } else {
+                barB.style.backgroundColor = 'var(--success)';
+                document.getElementById('sub-silo-b').innerText = '▼ Receptor Livre';
+                document.getElementById('sub-silo-b').className = 'kpi-sub badge-success';
+            }
+
+            // Silo C
+            document.getElementById('kpi-silo-c').innerText = `${ocupacaoSiloC}%`;
+            document.getElementById('txt-silo-c-val').innerText = `${ocupacaoSiloC * 100} / 10.000 t (${ocupacaoSiloC}%)`;
+            const barC = document.getElementById('bar-silo-c');
+            barC.style.width = `${ocupacaoSiloC}%`;
+            if (ocupacaoSiloC >= 90) {
+                barC.style.backgroundColor = 'var(--danger)';
+                document.getElementById('sub-silo-c').innerText = '▲ CRÍTICO (Saturado)';
+                document.getElementById('sub-silo-c').className = 'kpi-sub badge-danger';
+            } else {
+                barC.style.backgroundColor = 'var(--success)';
+                document.getElementById('sub-silo-c').innerText = '▼ Reserva Operacional';
+                document.getElementById('sub-silo-c').className = 'kpi-sub badge-success';
+            }
         }
 
-        window.onload = function() {
-            gerarNovosDados();
-        };
+        async function dispararDecisaoIA() {
+            try {
+                const resposta = await fetch('http://localhost:8000/api/predict', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        silo_a_ocupacao: ocupacaoSiloA,
+                        silo_b_ocupacao: ocupacaoSiloB,
+                        silo_c_ocupacao: ocupacaoSiloC,
+                        cargas_pendentes: frotaContador
+                    })
+                });
+
+                if (!resposta.ok) return;
+
+                const dados = await resposta.json();
+                const box = document.getElementById('ia-box');
+
+                document.getElementById('ia-badge').innerText = dados.nivel_alerta;
+                document.getElementById('ia-texto-motivo').innerText = dados.decisao_ia;
+
+                if (dados.silo_recomendado.includes('Silo B')) {
+                    box.className = 'ia-decision-box alerta-warning';
+                    document.getElementById('ia-badge').style.backgroundColor = "var(--warning)";
+                } else if (dados.silo_recomendado.includes('Silo C') || dados.silo_recomendado === 'BLOQUEADO') {
+                    box.className = 'ia-decision-box alerta-critico';
+                    document.getElementById('ia-badge').style.backgroundColor = "var(--danger)";
+                } else {
+                    box.className = 'ia-decision-box';
+                    document.getElementById('ia-badge').style.backgroundColor = "var(--success)";
+                }
+            } catch (erro) {
+                console.error("Erro ao conectar à API Agroflow IA:", erro);
+            }
+        }
+
+        function adicionarLinhaTabela(modelo, placa, carga, destino, status) {
+            const tbody = document.getElementById('tabela-frotas');
+            const newRow = document.createElement('tr');
+            newRow.className = 'row-nova';
+
+            let statusClass = 'status-pill';
+            let stylePill = 'style="background:#e2e8f0; color:#334155;"';
+
+            if (status.includes('Redirecionado')) {
+                statusClass = 'status-pill pill-redirected';
+                stylePill = '';
+            } else if (status.includes('Bloqueada')) {
+                statusClass = 'status-pill pill-blocked';
+                stylePill = '';
+            }
+
+            newRow.innerHTML = `
+                <td><b>${modelo}</b></td>
+                <td>${placa}</td>
+                <td>${carga}</td>
+                <td>Fazenda Primavera</td>
+                <td><b>${destino}</b></td>
+                <td><span class="${statusClass}" ${stylePill}>${status}</span></td>
+            `;
+
+            tbody.insertBefore(newRow, tbody.firstChild);
+        }
     </script>
 </body>
 </html>
